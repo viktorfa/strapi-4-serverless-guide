@@ -1,0 +1,33 @@
+service: strapi-4-serverless-guide
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: eu-central-1 # NOTE: Update to your region
+  logRetentionInDays: 1
+  versionFunctions: false
+
+  memorySize: 2048
+  timeout: 30
+
+package:
+  excludeDevDependencies: true
+  exclude: "**/**"
+  include: "src/**"
+
+functions:
+  hello:
+    handler: src/app.hello
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true
+      - http:
+          path: /{any+}
+          method: ANY
+          cors: true
+
+plugins:
+  - serverless-offline
