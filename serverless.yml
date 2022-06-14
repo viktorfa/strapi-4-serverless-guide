@@ -1,24 +1,53 @@
 service: strapi-4-serverless-guide
+
 frameworkVersion: "3"
+useDotenv: true
 
 provider:
   name: aws
   runtime: nodejs16.x
   region: eu-central-1 # NOTE: Update to your region
+  profile: strapi-serverless-admin # NOTE: Update to your profile name as in ~/.aws/credentials
   logRetentionInDays: 1
   versionFunctions: false
 
   memorySize: 2048
   timeout: 30
 
+  environment:
+    APP_KEYS: ${env:APP_KEYS}
+    API_TOKEN_SALT: ${env:API_TOKEN_SALT}
+    ADMIN_JWT_SECRET: ${env:ADMIN_JWT_SECRET}
+    JWT_SECRET: ${env:JWT_SECRET}
+
+    SERVER_URL: ${env:SERVER_URL}
+    DATABASE_PASSWORD: ${env:DATABASE_PASSWORD}
+    DATABASE_USERNAME: ${env:DATABASE_USERNAME}
+    DATABASE_NAME: ${env:DATABASE_NAME}
+    DATABASE_HOST: ${env:DATABASE_HOST}
+
 package:
   excludeDevDependencies: true
-  exclude: "**/**"
-  include: "src/**"
+  exclude:
+    - "**"
+  include:
+    - "build/**"
+    - "config/**"
+    - "database/**"
+    - "node_modules/**"
+    - "public/**"
+    - "src/**"
+    - ".env.example"
+    - "package.json"
+    - "!node_modules/esbuild-linux-64/**"
+    - "!node_modules/@babel/**"
+    - "!node_modules/@types/**"
+    - "!node_modules/webpack/**"
+    - "!node_modules/@sentry/**"
 
 functions:
-  hello:
-    handler: src/app.hello
+  api:
+    handler: src/app.strapiHandler
     events:
       - http:
           path: /
